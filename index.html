@@ -310,9 +310,232 @@
         body.vip-mode .btn-primary {
             background: linear-gradient(135deg, var(--gold) 0%, #d4af37 100%);
         }
+
+        /* Floating Petals Animation */
+        .floating-petals {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            opacity: 0.4;
+            animation: float-down linear infinite;
+        }
+
+        @keyframes float-down {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkle effect for premium flowers */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle-twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle-twinkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Glow effect for selected cards */
+        .flower-card.selected::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--deep-moss), var(--gold), var(--deep-moss));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: glow-rotate 3s linear infinite;
+        }
+
+        @keyframes glow-rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-effect 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Pop animation for adding to cart */
+        @keyframes pop-in {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pop-animation {
+            animation: pop-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* VIP Gold Particles */
+        .gold-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--gold), transparent);
+            border-radius: 50%;
+            animation: particle-rise 4s ease-in infinite;
+        }
+
+        @keyframes particle-rise {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Decorative Flourish */
+        .flourish {
+            opacity: 0.2;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* Bouquet Preview Container */
+        .bouquet-vase {
+            position: relative;
+            height: 200px;
+            margin: 1rem 0;
+        }
+
+        .vase-svg {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .bouquet-flower {
+            position: absolute;
+            bottom: 60px;
+            transform-origin: bottom center;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: flower-sway 3s ease-in-out infinite;
+        }
+
+        @keyframes flower-sway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* Progress bar to VIP */
+        .vip-progress-bar {
+            height: 6px;
+            background: rgba(201, 169, 97, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .vip-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-moss), var(--gold));
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .vip-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 3D card effects */
+        .flower-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .flower-card:hover:not(.out-of-stock) {
+            transform: translateY(-8px) rotateX(5deg);
+        }
     </style>
 </head>
 <body class="transition-theme">
+    <!-- Floating Petals Background -->
+    <div class="floating-petals" id="floatingPetals"></div>
     <div class="container mx-auto p-4 lg:p-8 max-w-[1600px]">
         <div class="bento-grid">
             <!-- Header -->
@@ -373,6 +596,32 @@
                 <h2 class="text-2xl font-bold mb-4 text-moss" style="color: var(--deep-moss);">
                     Order Summary
                 </h2>
+
+                <!-- Bouquet Preview -->
+                <div id="bouquetPreview" class="bouquet-vase hidden">
+                    <div id="bouquetFlowers"></div>
+                    <svg class="vase-svg" width="120" height="80" viewBox="0 0 120 80">
+                        <defs>
+                            <linearGradient id="vaseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:rgba(44,74,52,0.3);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:rgba(44,74,52,0.6);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M 30 10 Q 20 10, 20 40 L 25 75 Q 25 80, 30 80 L 90 80 Q 95 80, 95 75 L 100 40 Q 100 10, 90 10 Z"
+                              fill="url(#vaseGradient)" stroke="var(--deep-moss)" stroke-width="2"/>
+                        <ellipse cx="60" cy="10" rx="30" ry="8" fill="rgba(44,74,52,0.4)" stroke="var(--deep-moss)" stroke-width="2"/>
+                    </svg>
+                </div>
+
+                <!-- VIP Progress Bar -->
+                <div id="vipProgressContainer" class="hidden">
+                    <p class="text-xs mb-2" style="color: var(--soft-charcoal);">VIP Packaging Progress</p>
+                    <div class="vip-progress-bar">
+                        <div id="vipProgressFill" class="vip-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <p class="text-xs text-right mt-1" style="color: var(--gold);" id="vipProgressText">$0 / $150</p>
+                </div>
+
                 <div id="receiptItems" class="mb-4 max-h-[300px] overflow-y-auto">
                     <p class="text-charcoal opacity-60 text-sm" style="color: var(--soft-charcoal);">
                         No items added yet
@@ -406,6 +655,129 @@
     <div id="toastContainer" class="fixed top-8 right-8 z-50 flex flex-col gap-3"></div>
 
     <script>
+        // ============================
+        // SVG Flower Generator
+        // ============================
+        const FlowerSVG = {
+            rose: (color, size = 60) => `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <defs>
+                        <radialGradient id="rose-gradient-${color}">
+                            <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${color};stop-opacity:0.6" />
+                        </radialGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="8" fill="url(#rose-gradient-${color})" />
+                    <circle cx="50" cy="42" r="10" fill="${color}" opacity="0.8" />
+                    <circle cx="58" cy="50" r="10" fill="${color}" opacity="0.7" />
+                    <circle cx="50" cy="58" r="10" fill="${color}" opacity="0.7" />
+                    <circle cx="42" cy="50" r="10" fill="${color}" opacity="0.7" />
+                    <circle cx="56" cy="44" r="9" fill="${color}" opacity="0.6" />
+                    <circle cx="56" cy="56" r="9" fill="${color}" opacity="0.6" />
+                    <circle cx="44" cy="56" r="9" fill="${color}" opacity="0.6" />
+                    <circle cx="44" cy="44" r="9" fill="${color}" opacity="0.6" />
+                    <line x1="50" y1="65" x2="50" y2="95" stroke="#2d5016" stroke-width="2"/>
+                    <path d="M 50 75 Q 45 78, 42 80" fill="none" stroke="#2d5016" stroke-width="1.5"/>
+                    <ellipse cx="43" cy="80" rx="4" ry="6" fill="#3a6622" opacity="0.8"/>
+                </svg>
+            `,
+            tulip: (color, size = 60) => `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="tulip-gradient-${color}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${color};stop-opacity:0.7" />
+                        </linearGradient>
+                    </defs>
+                    <ellipse cx="50" cy="45" rx="12" ry="18" fill="url(#tulip-gradient-${color})" />
+                    <ellipse cx="40" cy="48" rx="10" ry="16" fill="${color}" opacity="0.8" />
+                    <ellipse cx="60" cy="48" rx="10" ry="16" fill="${color}" opacity="0.8" />
+                    <line x1="50" y1="60" x2="50" y2="95" stroke="#2d5016" stroke-width="2.5"/>
+                    <path d="M 50 70 Q 55 73, 58 75" fill="none" stroke="#2d5016" stroke-width="1.5"/>
+                    <ellipse cx="57" cy="75" rx="5" ry="7" fill="#3a6622" opacity="0.9"/>
+                </svg>
+            `,
+            daisy: (color, size = 60) => `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    ${Array.from({length: 8}, (_, i) => {
+                        const angle = (i * 45) * Math.PI / 180;
+                        const x = 50 + Math.cos(angle) * 15;
+                        const y = 45 + Math.sin(angle) * 15;
+                        return `<ellipse cx="${x}" cy="${y}" rx="6" ry="10" fill="${color}" opacity="0.9" transform="rotate(${i * 45} ${x} ${y})"/>`;
+                    }).join('')}
+                    <circle cx="50" cy="45" r="8" fill="#FFD700" />
+                    <line x1="50" y1="60" x2="50" y2="95" stroke="#2d5016" stroke-width="2"/>
+                </svg>
+            `,
+            lily: (color, size = 60) => `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <path d="M 50 35 Q 40 40, 38 50 Q 40 58, 50 60" fill="${color}" opacity="0.8"/>
+                    <path d="M 50 35 Q 60 40, 62 50 Q 60 58, 50 60" fill="${color}" opacity="0.8"/>
+                    <path d="M 50 30 Q 48 40, 50 55" fill="${color}" opacity="0.9"/>
+                    <circle cx="50" cy="45" r="3" fill="#FFD700"/>
+                    <line x1="50" y1="55" x2="50" y2="95" stroke="#2d5016" stroke-width="2"/>
+                </svg>
+            `
+        };
+
+        // ============================
+        // Visual Effects
+        // ============================
+        const VisualEffects = {
+            createFloatingPetals() {
+                const container = document.getElementById('floatingPetals');
+                for (let i = 0; i < 15; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.style.left = Math.random() * 100 + '%';
+                    petal.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                    petal.style.animationDelay = Math.random() * 5 + 's';
+                    const colors = ['#FFB6C1', '#FF6B9D', '#DC143C', '#FFD700', '#87CEEB'];
+                    petal.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20">
+                        <ellipse cx="10" cy="10" rx="8" ry="4" fill="${colors[Math.floor(Math.random() * colors.length)]}" transform="rotate(${Math.random() * 360} 10 10)"/>
+                    </svg>`;
+                    container.appendChild(petal);
+                }
+            },
+
+            createRipple(e, element) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                const rect = element.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                element.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            },
+
+            createConfetti() {
+                const colors = ['#c9a961', '#DC143C', '#FFB6C1', '#FFD700', '#2c4a34'];
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }
+            },
+
+            createGoldParticles(container) {
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'gold-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.bottom = '0';
+                    particle.style.animationDelay = Math.random() * 2 + 's';
+                    container.appendChild(particle);
+                }
+            }
+        };
+
         // ============================
         // State Management with Proxy
         // ============================
@@ -455,6 +827,9 @@
                     this.onStateChange.bind(this)
                 );
 
+                // Initialize visual effects
+                VisualEffects.createFloatingPetals();
+
                 this.render();
                 lucide.createIcons();
             },
@@ -499,11 +874,16 @@
             },
 
             // Add item to cart
-            addToCart(flowerId) {
+            addToCart(flowerId, event) {
                 const flower = this.state.inventory.find(f => f.id === flowerId);
                 if (!flower || flower.stock <= 0) return;
 
                 const cartItem = this.state.cart.find(item => item.id === flowerId);
+
+                // Create ripple effect on click
+                if (event && event.currentTarget) {
+                    VisualEffects.createRipple(event, event.currentTarget);
+                }
 
                 if (cartItem) {
                     if (cartItem.quantity < flower.stock) {
@@ -511,6 +891,7 @@
                         this.state.cart = [...this.state.cart];
                     } else {
                         this.showToast('No more stock available', 'warning');
+                        return;
                     }
                 } else {
                     this.state.cart = [...this.state.cart, {
@@ -518,11 +899,13 @@
                         name: flower.name,
                         price: flower.price,
                         quantity: 1,
-                        color: flower.color
+                        color: flower.color,
+                        type: flower.type
                     }];
                 }
 
                 this.updateInventoryStock();
+                this.updateBouquetPreview();
             },
 
             // Remove item from cart
@@ -538,6 +921,73 @@
                 }
 
                 this.updateInventoryStock();
+                this.updateBouquetPreview();
+            },
+
+            // Update bouquet preview visualization
+            updateBouquetPreview() {
+                const preview = document.getElementById('bouquetPreview');
+                const flowersContainer = document.getElementById('bouquetFlowers');
+
+                if (this.state.cart.length === 0) {
+                    preview.classList.add('hidden');
+                    return;
+                }
+
+                preview.classList.remove('hidden');
+                flowersContainer.innerHTML = '';
+
+                const positions = [
+                    { left: '35%', rotation: -15 },
+                    { left: '50%', rotation: 0 },
+                    { left: '65%', rotation: 15 },
+                    { left: '42%', rotation: -8 },
+                    { left: '58%', rotation: 8 },
+                    { left: '30%', rotation: -20 },
+                    { left: '70%', rotation: 20 }
+                ];
+
+                this.state.cart.forEach((item, index) => {
+                    const pos = positions[index % positions.length];
+                    const flowerDiv = document.createElement('div');
+                    flowerDiv.className = 'bouquet-flower';
+                    flowerDiv.style.left = pos.left;
+                    flowerDiv.style.transform = `rotate(${pos.rotation}deg)`;
+                    flowerDiv.style.zIndex = 10 + index;
+                    flowerDiv.style.animationDelay = `${index * 0.3}s`;
+
+                    // Get appropriate SVG based on flower type
+                    let svg = '';
+                    if (item.name.includes('Rose') || item.name.includes('Peony')) {
+                        svg = FlowerSVG.rose(item.color, 40);
+                    } else if (item.name.includes('Tulip')) {
+                        svg = FlowerSVG.tulip(item.color, 40);
+                    } else if (item.name.includes('Lily')) {
+                        svg = FlowerSVG.lily(item.color, 40);
+                    } else {
+                        svg = FlowerSVG.daisy(item.color, 40);
+                    }
+
+                    flowerDiv.innerHTML = svg;
+                    flowersContainer.appendChild(flowerDiv);
+                });
+            },
+
+            // Update VIP progress bar
+            updateVIPProgress() {
+                const container = document.getElementById('vipProgressContainer');
+                const fill = document.getElementById('vipProgressFill');
+                const text = document.getElementById('vipProgressText');
+
+                if (this.state.cart.length === 0) {
+                    container.classList.add('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                const percentage = Math.min((this.state.total / 150) * 100, 100);
+                fill.style.width = percentage + '%';
+                text.textContent = `$${this.state.total.toFixed(2)} / $150`;
             },
 
             // Update inventory stock based on cart
@@ -564,11 +1014,18 @@
                 const vipBadgeContainer = document.getElementById('vipBadgeContainer');
                 if (enabled) {
                     vipBadgeContainer.innerHTML = `
-                        <div class="vip-badge">
+                        <div class="vip-badge" id="vipBadge">
                             <i data-lucide="crown" class="w-5 h-5"></i>
                             VIP Packaging Activated
                         </div>
                     `;
+
+                    // Create gold particles effect
+                    const badge = document.getElementById('vipBadge');
+                    if (badge) {
+                        VisualEffects.createGoldParticles(badge);
+                    }
+
                     this.showToast('VIP Packaging Activated! Your order receives premium treatment.', 'success');
                 } else {
                     vipBadgeContainer.innerHTML = '';
@@ -592,12 +1049,17 @@
                     message += ' VIP packaging included.';
                 }
 
+                // Create confetti celebration effect
+                VisualEffects.createConfetti();
+
                 this.showToast(message, 'success');
 
                 // Reset after 2 seconds
                 setTimeout(() => {
                     this.state.cart = [];
                     this.updateInventoryStock();
+                    this.updateBouquetPreview();
+                    this.updateVIPProgress();
                 }, 2000);
             },
 
@@ -645,19 +1107,38 @@
                     const isLowStock = flower.stock > 0 && flower.stock <= 5;
                     const cartItem = this.state.cart.find(item => item.id === flower.id);
                     const isSelected = !!cartItem;
+                    const isPremium = flower.type === 'Premium';
+
+                    // Get appropriate SVG for flower
+                    let flowerSVG = '';
+                    if (flower.name.includes('Rose') || flower.name.includes('Peony')) {
+                        flowerSVG = FlowerSVG.rose(flower.color, 80);
+                    } else if (flower.name.includes('Tulip')) {
+                        flowerSVG = FlowerSVG.tulip(flower.color, 80);
+                    } else if (flower.name.includes('Lily')) {
+                        flowerSVG = FlowerSVG.lily(flower.color, 80);
+                    } else {
+                        flowerSVG = FlowerSVG.daisy(flower.color, 80);
+                    }
 
                     return `
-                        <div class="${gridClasses[index] || ''} flower-card glass rounded-3xl p-6 transition-theme ${isOutOfStock ? 'out-of-stock' : ''} ${isSelected ? 'selected breathing' : ''}"
-                             onclick="${isOutOfStock ? '' : `app.addToCart(${flower.id})`}">
+                        <div class="${gridClasses[index] || ''} flower-card glass rounded-3xl p-6 transition-theme ${isOutOfStock ? 'out-of-stock' : ''} ${isSelected ? 'selected breathing' : ''} ${isPremium ? 'premium-flower' : ''}"
+                             onclick="${isOutOfStock ? '' : `app.addToCart(${flower.id}, event)`}"
+                             data-flower-id="${flower.id}">
 
                             <span class="stock-badge ${isLowStock ? 'low' : ''} ${isOutOfStock ? 'out' : ''}">
                                 ${isOutOfStock ? 'Out of Stock' : `${flower.stock} stems`}
                             </span>
 
+                            ${isPremium && !isOutOfStock ? `
+                                <span class="sparkle" style="top: 20%; left: 20%; animation-delay: 0s;"></span>
+                                <span class="sparkle" style="top: 25%; right: 25%; animation-delay: 0.5s;"></span>
+                                <span class="sparkle" style="bottom: 30%; left: 30%; animation-delay: 1s;"></span>
+                            ` : ''}
+
                             <div class="flower-card-content flex flex-col items-center gap-4 mb-4">
-                                <div class="w-20 h-20 rounded-full flex items-center justify-center"
-                                     style="background: linear-gradient(135deg, ${flower.color}40 0%, ${flower.color}80 100%);">
-                                    <i data-lucide="${flower.icon}" class="w-10 h-10" style="color: ${flower.color};"></i>
+                                <div class="relative flex items-center justify-center">
+                                    ${flowerSVG}
                                 </div>
                                 <div class="flex-1 text-center">
                                     <h3 class="text-xl font-bold mb-1 text-moss" style="color: var(--deep-moss);">
@@ -756,6 +1237,9 @@
 
                 feesDiv.innerHTML = feesHTML;
                 totalPrice.textContent = `$${this.state.total.toFixed(2)}`;
+
+                // Update VIP progress bar
+                this.updateVIPProgress();
             },
 
             // Initial render
