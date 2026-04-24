@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init)",
+      "Bash(git add .)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: Bloom & Petal Interactive Bouquet Builder\n\nImplemented a high-end, single-file interactive bouquet builder with:\n- Virtual vase with animated flower display\n- Live pricing engine (base $15, standard flowers $2, premium $5)\n- Complimentary silk ribbon for orders over $40\n- Gift message with live preview on styled gift card\n- Boutique branding with soft pinks, deep greens, and gold accents\n- Validation for empty vase checkout\n- Tailwind CSS and Lucide Icons via CDN\n- Vanilla JavaScript with elegant animations\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
