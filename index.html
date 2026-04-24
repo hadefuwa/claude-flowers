@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bloom & Petal - Interactive Bouquet Builder</title>
+    <title>Bloom & Petal - Order Management System</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,463 +11,764 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Fonts for Serif -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --soft-pink: #fadadd;
-            --deep-pink: #f4a5b0;
-            --deep-green: #2d5016;
-            --light-green: #527a3a;
-            --gold: #d4af37;
-            --cream: #fefbf3;
+            --champagne: #f7e7ce;
+            --deep-moss: #2c4a34;
+            --soft-charcoal: #3d3d3d;
+            --gold: #c9a961;
+            --glass-white: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Lato', sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, var(--soft-pink) 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--champagne) 0%, #e8d5b7 50%, #d4c5ab 100%);
             min-height: 100vh;
+            color: var(--soft-charcoal);
         }
 
         h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
         }
 
-        .vase-container {
-            position: relative;
-            width: 300px;
-            height: 400px;
-            margin: 0 auto;
+        /* Glassmorphism Base */
+        .glass {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
 
-        .vase {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 250px;
-            background: linear-gradient(to bottom, rgba(45, 80, 22, 0.2) 0%, rgba(45, 80, 22, 0.4) 100%);
-            border-radius: 0 0 30% 30%;
-            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-            border: 3px solid var(--deep-green);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        .glass-dark {
+            background: rgba(44, 74, 52, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(201, 169, 97, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
         }
 
-        .flower-in-vase {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: bloom 0.5s ease-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: transform 0.2s;
+        /* VIP Mode Styling */
+        body.vip-mode {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2416 50%, #1f1f1f 100%);
         }
 
-        .flower-in-vase:hover {
-            transform: scale(1.1);
+        body.vip-mode .glass {
+            background: rgba(201, 169, 97, 0.15);
+            border: 1px solid rgba(201, 169, 97, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(201, 169, 97, 0.25);
         }
 
-        @keyframes bloom {
-            0% {
-                transform: scale(0) rotate(-180deg);
-                opacity: 0;
+        body.vip-mode h1,
+        body.vip-mode h2,
+        body.vip-mode h3,
+        body.vip-mode .text-moss {
+            color: var(--gold) !important;
+        }
+
+        body.vip-mode .text-charcoal {
+            color: #e8e8e8 !important;
+        }
+
+        /* Bento Grid Layout */
+        .bento-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto;
+            grid-template-areas:
+                "header header header header header header header header header header header header"
+                "search search search search search search search search search search search search"
+                "featured featured featured featured featured featured featured featured receipt receipt receipt receipt"
+                "inv1 inv1 inv1 inv2 inv2 inv2 inv3 inv3 inv3 inv4 inv4 inv4"
+                "inv5 inv5 inv5 inv6 inv6 inv6 inv7 inv7 inv7 inv8 inv8 inv8";
+        }
+
+        @media (max-width: 1280px) {
+            .bento-grid {
+                grid-template-areas:
+                    "header header header header header header header header header header header header"
+                    "search search search search search search search search search search search search"
+                    "featured featured featured featured featured featured featured featured featured featured featured featured"
+                    "receipt receipt receipt receipt receipt receipt receipt receipt receipt receipt receipt receipt"
+                    "inv1 inv1 inv1 inv1 inv2 inv2 inv2 inv2 inv3 inv3 inv3 inv3"
+                    "inv4 inv4 inv4 inv4 inv5 inv5 inv5 inv5 inv6 inv6 inv6 inv6"
+                    "inv7 inv7 inv7 inv7 inv8 inv8 inv8 inv8 . . . .";
             }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-areas:
+                    "header header header header header header"
+                    "search search search search search search"
+                    "featured featured featured featured featured featured"
+                    "receipt receipt receipt receipt receipt receipt"
+                    "inv1 inv1 inv1 inv2 inv2 inv2"
+                    "inv3 inv3 inv3 inv4 inv4 inv4"
+                    "inv5 inv5 inv5 inv6 inv6 inv6"
+                    "inv7 inv7 inv7 inv8 inv8 inv8";
             }
         }
 
-        .flower-btn {
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+        .grid-header { grid-area: header; }
+        .grid-search { grid-area: search; }
+        .grid-featured { grid-area: featured; }
+        .grid-receipt { grid-area: receipt; }
+        .grid-inv-1 { grid-area: inv1; }
+        .grid-inv-2 { grid-area: inv2; }
+        .grid-inv-3 { grid-area: inv3; }
+        .grid-inv-4 { grid-area: inv4; }
+        .grid-inv-5 { grid-area: inv5; }
+        .grid-inv-6 { grid-area: inv6; }
+        .grid-inv-7 { grid-area: inv7; }
+        .grid-inv-8 { grid-area: inv8; }
+
+        /* Container Queries */
+        @container (min-width: 400px) {
+            .flower-card-content {
+                flex-direction: row;
+            }
         }
 
-        .flower-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        /* Micro-interactions */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.95; }
         }
 
-        .gift-card {
-            background: linear-gradient(135deg, var(--cream) 0%, white 100%);
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-            min-height: 120px;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: var(--deep-green);
-        }
-
-        .receipt-item {
-            border-bottom: 1px dashed var(--light-green);
-            padding: 8px 0;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-left: 4px solid var(--gold);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.3s ease-out;
-            z-index: 1000;
-            max-width: 350px;
+        .breathing {
+            animation: breathe 2s ease-in-out infinite;
         }
 
         @keyframes slideIn {
-            0% {
-                transform: translateX(400px);
+            from {
+                transform: translateX(-10px);
                 opacity: 0;
             }
-            100% {
+            to {
                 transform: translateX(0);
                 opacity: 1;
             }
         }
 
-        .celebration {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--deep-pink) 100%);
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Flower Card */
+        .flower-card {
+            container-type: inline-size;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flower-card:hover:not(.out-of-stock) {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+        }
+
+        .flower-card.out-of-stock {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .flower-card.selected {
+            border: 2px solid var(--deep-moss);
+        }
+
+        body.vip-mode .flower-card.selected {
+            border: 2px solid var(--gold);
+        }
+
+        /* Stock Badge */
+        .stock-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(44, 74, 52, 0.9);
             color: white;
-            border-left: 4px solid white;
+        }
+
+        .stock-badge.low {
+            background: rgba(201, 169, 97, 0.9);
+        }
+
+        .stock-badge.out {
+            background: rgba(150, 150, 150, 0.9);
+        }
+
+        /* Receipt Items */
+        .receipt-item {
+            border-bottom: 1px solid rgba(44, 74, 52, 0.1);
+            padding: 0.75rem 0;
+        }
+
+        body.vip-mode .receipt-item {
+            border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        /* Smooth transitions */
+        .transition-theme {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Search Input */
+        .search-input {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-color: var(--deep-moss);
+        }
+
+        body.vip-mode .search-input {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(201, 169, 97, 0.3);
+            color: white;
+        }
+
+        body.vip-mode .search-input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: var(--gold);
+        }
+
+        body.vip-mode .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* VIP Badge */
+        .vip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--gold) 0%, #d4af37 100%);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--deep-moss) 0%, #3a5f45 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 74, 52, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        body.vip-mode .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #d4af37 100%);
         }
     </style>
 </head>
-<body class="p-8">
-
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="text-center mb-12">
-            <h1 class="text-6xl font-bold mb-2" style="color: var(--deep-green);">
-                Bloom & Petal
-            </h1>
-            <p class="text-xl" style="color: var(--light-green);">
-                <i>Boutique Bouquet Builder</i>
-            </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Left Column: Flower Selection & Vase -->
-            <div class="bg-white/80 backdrop-blur rounded-2xl p-8 shadow-2xl">
-                <h2 class="text-3xl font-bold mb-6" style="color: var(--deep-green);">
-                    Create Your Bouquet
-                </h2>
-
-                <!-- Virtual Vase -->
-                <div class="vase-container mb-8" id="vaseContainer">
-                    <div id="flowersDisplay"></div>
-                    <div class="vase"></div>
-                </div>
-
-                <!-- Flower Selection -->
-                <div class="mb-6">
-                    <h3 class="text-2xl font-semibold mb-4" style="color: var(--deep-green);">
-                        Standard Collection
-                    </h3>
-                    <p class="text-sm mb-3" style="color: var(--light-green);">$2.00 each</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="addFlower('Tulip', 2.00, '#FF6B9D')"
-                                class="flower-btn bg-gradient-to-br from-pink-300 to-pink-400 text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2">
-                            <i data-lucide="flower-2" class="w-6 h-6"></i>
-                            Tulip
-                        </button>
-                        <button onclick="addFlower('Daisy', 2.00, '#FFE66D')"
-                                class="flower-btn bg-gradient-to-br from-yellow-200 to-yellow-300 text-gray-800 py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2">
-                            <i data-lucide="flower" class="w-6 h-6"></i>
-                            Daisy
-                        </button>
+<body class="transition-theme">
+    <div class="container mx-auto p-4 lg:p-8 max-w-[1600px]">
+        <div class="bento-grid">
+            <!-- Header -->
+            <div class="grid-header glass rounded-3xl p-6 lg:p-8 transition-theme">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div>
+                        <h1 class="text-4xl lg:text-6xl font-bold text-moss mb-2" style="color: var(--deep-moss);">
+                            Bloom & Petal
+                        </h1>
+                        <p class="text-lg text-charcoal" style="color: var(--soft-charcoal);">
+                            Order Management System
+                        </p>
                     </div>
+                    <div id="vipBadgeContainer"></div>
                 </div>
+            </div>
 
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: var(--deep-green);">
-                        Premium Collection
-                    </h3>
-                    <p class="text-sm mb-3" style="color: var(--light-green);">$5.00 each</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="addFlower('Rose', 5.00, '#DC143C')"
-                                class="flower-btn bg-gradient-to-br from-red-400 to-red-500 text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2">
-                            <i data-lucide="flower-2" class="w-6 h-6"></i>
-                            Rose
-                        </button>
-                        <button onclick="addFlower('Lily', 5.00, '#E6E6FA')"
-                                class="flower-btn bg-gradient-to-br from-purple-200 to-purple-300 text-gray-800 py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2">
-                            <i data-lucide="flower" class="w-6 h-6"></i>
-                            Lily
-                        </button>
+            <!-- Search -->
+            <div class="grid-search glass rounded-3xl p-6 transition-theme">
+                <div class="relative">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2" style="color: var(--soft-charcoal);"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search flowers by name or type..."
+                        class="search-input w-full pl-12 pr-4 py-3 rounded-xl font-medium"
+                        oninput="app.handleSearch(this.value)"
+                    />
+                </div>
+            </div>
+
+            <!-- Featured Bloom -->
+            <div class="grid-featured glass rounded-3xl p-8 transition-theme">
+                <div class="flex flex-col lg:flex-row gap-6 items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-32 h-32 lg:w-40 lg:h-40 rounded-full glass-dark flex items-center justify-center breathing">
+                            <i data-lucide="flower-2" class="w-20 h-20 lg:w-24 lg:h-24" style="color: var(--gold);"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 text-center lg:text-left">
+                        <h2 class="text-3xl lg:text-4xl font-bold mb-3 text-moss" style="color: var(--deep-moss);">
+                            Featured Premium Selection
+                        </h2>
+                        <p class="text-base lg:text-lg text-charcoal mb-4" style="color: var(--soft-charcoal);">
+                            Curated seasonal blooms with exceptional quality and fragrance. Each stem hand-selected by our master florists.
+                        </p>
+                        <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium glass-dark" style="color: var(--deep-moss);">Premium Quality</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium glass-dark" style="color: var(--deep-moss);">Same-Day Delivery</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium glass-dark" style="color: var(--deep-moss);">Sustainable</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Gift Note & Receipt -->
-            <div class="space-y-8">
-                <!-- Gift Message -->
-                <div class="bg-white/80 backdrop-blur rounded-2xl p-8 shadow-2xl">
-                    <h2 class="text-3xl font-bold mb-6" style="color: var(--deep-green);">
-                        Add a Personal Touch
-                    </h2>
-
-                    <label class="block mb-3 font-semibold" style="color: var(--light-green);">
-                        Gift Message
-                    </label>
-                    <textarea
-                        id="giftMessage"
-                        oninput="updateGiftCard()"
-                        class="w-full p-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 resize-none"
-                        style="border-color: var(--light-green); focus:ring-color: var(--gold);"
-                        rows="4"
-                        placeholder="Write a heartfelt message..."></textarea>
-
-                    <div class="mt-4">
-                        <p class="text-sm mb-2 font-semibold" style="color: var(--light-green);">
-                            Preview:
-                        </p>
-                        <div class="gift-card" id="giftCardPreview">
-                            <p class="text-gray-400 italic">Your message will appear here...</p>
-                        </div>
+            <!-- Live Receipt -->
+            <div class="grid-receipt glass rounded-3xl p-6 transition-theme">
+                <h2 class="text-2xl font-bold mb-4 text-moss" style="color: var(--deep-moss);">
+                    Order Summary
+                </h2>
+                <div id="receiptItems" class="mb-4 max-h-[300px] overflow-y-auto">
+                    <p class="text-charcoal opacity-60 text-sm" style="color: var(--soft-charcoal);">
+                        No items added yet
+                    </p>
+                </div>
+                <div id="fees" class="mb-4"></div>
+                <div class="border-t-2 pt-4 mb-4" style="border-color: var(--deep-moss);">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-moss" style="color: var(--deep-moss);">Total:</span>
+                        <span id="totalPrice" class="text-3xl font-bold" style="color: var(--gold);">$0.00</span>
                     </div>
                 </div>
+                <button
+                    onclick="app.checkout()"
+                    id="checkoutBtn"
+                    class="btn-primary w-full transition-theme"
+                    disabled
+                >
+                    Complete Order
+                </button>
+            </div>
 
-                <!-- Receipt -->
-                <div class="bg-white/80 backdrop-blur rounded-2xl p-8 shadow-2xl">
-                    <h2 class="text-3xl font-bold mb-6" style="color: var(--deep-green);">
-                        Your Order
-                    </h2>
-
-                    <div id="receipt" class="mb-6">
-                        <div class="receipt-item flex justify-between">
-                            <span style="color: var(--light-green);">Base Arrangement</span>
-                            <span style="color: var(--deep-green);" class="font-semibold">$15.00</span>
-                        </div>
-                    </div>
-
-                    <div id="ribbonMessage" class="hidden mb-4 p-4 rounded-lg" style="background-color: var(--soft-pink); border-left: 4px solid var(--gold);">
-                        <p class="font-semibold" style="color: var(--deep-green);">
-                            🎀 Complimentary Silk Ribbon Included!
-                        </p>
-                    </div>
-
-                    <div class="pt-4 border-t-2 flex justify-between items-center" style="border-color: var(--deep-green);">
-                        <span class="text-2xl font-bold" style="color: var(--deep-green);">Total:</span>
-                        <span id="totalPrice" class="text-3xl font-bold" style="color: var(--gold);">$15.00</span>
-                    </div>
-
-                    <button
-                        onclick="checkout()"
-                        class="w-full mt-6 py-4 px-6 rounded-xl font-bold text-white text-xl shadow-lg transition-all hover:shadow-2xl hover:scale-105"
-                        style="background: linear-gradient(135deg, var(--deep-green) 0%, var(--light-green) 100%);">
-                        Complete Your Order
-                    </button>
-                </div>
+            <!-- Inventory Cards -->
+            <div id="inventoryContainer" class="contents">
+                <!-- Populated by JavaScript -->
             </div>
         </div>
     </div>
 
+    <!-- Notification Toast -->
+    <div id="toastContainer" class="fixed top-8 right-8 z-50 flex flex-col gap-3"></div>
+
     <script>
-        // State
-        let flowers = [];
-        let basePrice = 15.00;
+        // ============================
+        // State Management with Proxy
+        // ============================
+        const createState = (initialState, onChange) => {
+            return new Proxy(initialState, {
+                set(target, property, value) {
+                    const oldValue = target[property];
+                    target[property] = value;
+                    if (oldValue !== value) {
+                        onChange(property, value, oldValue);
+                    }
+                    return true;
+                }
+            });
+        };
 
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // ============================
+        // Application Core
+        // ============================
+        const app = {
+            state: null,
 
-        // Add flower to bouquet
-        function addFlower(name, price, color) {
-            const flower = {
-                id: Date.now(),
-                name: name,
-                price: price,
-                color: color
-            };
+            // Initial inventory data
+            inventory: [
+                { id: 1, name: 'Garden Rose', type: 'Premium', price: 8.50, stock: 12, icon: 'flower-2', color: '#DC143C' },
+                { id: 2, name: 'Peony', type: 'Premium', price: 9.00, stock: 8, icon: 'flower', color: '#FFB6C1' },
+                { id: 3, name: 'Calla Lily', type: 'Premium', price: 7.50, stock: 15, icon: 'flower-2', color: '#F5F5DC' },
+                { id: 4, name: 'Tulip', type: 'Standard', price: 3.50, stock: 25, icon: 'flower', color: '#FF6B9D' },
+                { id: 5, name: 'Sunflower', type: 'Standard', price: 4.00, stock: 20, icon: 'flower-2', color: '#FFD700' },
+                { id: 6, name: 'Orchid', type: 'Premium', price: 12.00, stock: 5, icon: 'flower', color: '#DA70D6' },
+                { id: 7, name: 'Hydrangea', type: 'Standard', price: 5.50, stock: 10, icon: 'flower-2', color: '#87CEEB' },
+                { id: 8, name: 'Dahlia', type: 'Standard', price: 4.50, stock: 18, icon: 'flower', color: '#FF4500' }
+            ],
 
-            flowers.push(flower);
-            updateDisplay();
-            updateReceipt();
-        }
+            // Initialize app
+            init() {
+                this.state = createState(
+                    {
+                        cart: [],
+                        inventory: [...this.inventory],
+                        searchQuery: '',
+                        vipMode: false,
+                        subtotal: 0,
+                        complexityPremium: 0,
+                        total: 0
+                    },
+                    this.onStateChange.bind(this)
+                );
 
-        // Remove flower from bouquet
-        function removeFlower(id) {
-            flowers = flowers.filter(f => f.id !== id);
-            updateDisplay();
-            updateReceipt();
-        }
+                this.render();
+                lucide.createIcons();
+            },
 
-        // Update visual display of flowers in vase
-        function updateDisplay() {
-            const container = document.getElementById('flowersDisplay');
-            container.innerHTML = '';
+            // State change handler
+            onStateChange(property, value, oldValue) {
+                if (property === 'cart') {
+                    this.calculatePricing();
+                    this.renderReceipt();
+                } else if (property === 'inventory' || property === 'searchQuery') {
+                    this.renderInventory();
+                } else if (property === 'vipMode') {
+                    this.toggleVIPMode(value);
+                }
 
-            flowers.forEach((flower, index) => {
-                const flowerElement = document.createElement('div');
-                flowerElement.className = 'flower-in-vase';
-                flowerElement.style.backgroundColor = flower.color;
-                flowerElement.onclick = () => removeFlower(flower.id);
-                flowerElement.title = `Click to remove ${flower.name}`;
+                // Update icons after any render
+                setTimeout(() => lucide.createIcons(), 0);
+            },
 
-                // Position flowers in a semi-random but organized way
-                const positions = [
-                    { left: '25%', top: '10%' },
-                    { left: '50%', top: '5%' },
-                    { left: '75%', top: '15%' },
-                    { left: '30%', top: '30%' },
-                    { left: '60%', top: '25%' },
-                    { left: '40%', top: '50%' },
-                    { left: '70%', top: '45%' },
-                    { left: '20%', top: '60%' },
-                    { left: '55%', top: '55%' },
-                    { left: '35%', top: '70%' }
+            // Calculate pricing with smart fees
+            calculatePricing() {
+                const subtotal = this.state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const uniqueTypes = new Set(this.state.cart.map(item => item.name)).size;
+
+                let complexityPremium = 0;
+                if (uniqueTypes > 3) {
+                    complexityPremium = subtotal * 0.10;
+                }
+
+                const total = subtotal + complexityPremium;
+
+                this.state.subtotal = subtotal;
+                this.state.complexityPremium = complexityPremium;
+                this.state.total = total;
+
+                // Check VIP threshold
+                if (total > 150 && !this.state.vipMode) {
+                    this.state.vipMode = true;
+                } else if (total <= 150 && this.state.vipMode) {
+                    this.state.vipMode = false;
+                }
+            },
+
+            // Add item to cart
+            addToCart(flowerId) {
+                const flower = this.state.inventory.find(f => f.id === flowerId);
+                if (!flower || flower.stock <= 0) return;
+
+                const cartItem = this.state.cart.find(item => item.id === flowerId);
+
+                if (cartItem) {
+                    if (cartItem.quantity < flower.stock) {
+                        cartItem.quantity++;
+                        this.state.cart = [...this.state.cart];
+                    } else {
+                        this.showToast('No more stock available', 'warning');
+                    }
+                } else {
+                    this.state.cart = [...this.state.cart, {
+                        id: flower.id,
+                        name: flower.name,
+                        price: flower.price,
+                        quantity: 1,
+                        color: flower.color
+                    }];
+                }
+
+                this.updateInventoryStock();
+            },
+
+            // Remove item from cart
+            removeFromCart(flowerId) {
+                const cartItem = this.state.cart.find(item => item.id === flowerId);
+                if (!cartItem) return;
+
+                if (cartItem.quantity > 1) {
+                    cartItem.quantity--;
+                    this.state.cart = [...this.state.cart];
+                } else {
+                    this.state.cart = this.state.cart.filter(item => item.id !== flowerId);
+                }
+
+                this.updateInventoryStock();
+            },
+
+            // Update inventory stock based on cart
+            updateInventoryStock() {
+                this.state.inventory = this.inventory.map(flower => {
+                    const cartItem = this.state.cart.find(item => item.id === flower.id);
+                    const usedStock = cartItem ? cartItem.quantity : 0;
+                    return {
+                        ...flower,
+                        stock: this.inventory.find(f => f.id === flower.id).stock - usedStock
+                    };
+                });
+            },
+
+            // Search handler
+            handleSearch(query) {
+                this.state.searchQuery = query.toLowerCase();
+            },
+
+            // Toggle VIP mode
+            toggleVIPMode(enabled) {
+                document.body.classList.toggle('vip-mode', enabled);
+
+                const vipBadgeContainer = document.getElementById('vipBadgeContainer');
+                if (enabled) {
+                    vipBadgeContainer.innerHTML = `
+                        <div class="vip-badge">
+                            <i data-lucide="crown" class="w-5 h-5"></i>
+                            VIP Packaging Activated
+                        </div>
+                    `;
+                    this.showToast('VIP Packaging Activated! Your order receives premium treatment.', 'success');
+                } else {
+                    vipBadgeContainer.innerHTML = '';
+                }
+
+                lucide.createIcons();
+            },
+
+            // Checkout
+            checkout() {
+                if (this.state.cart.length === 0) {
+                    this.showToast('Please add items to your order before checkout.', 'warning');
+                    return;
+                }
+
+                const uniqueTypes = new Set(this.state.cart.map(item => item.name)).size;
+                const totalItems = this.state.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+                let message = `Order confirmed! ${totalItems} stems across ${uniqueTypes} varieties.`;
+                if (this.state.vipMode) {
+                    message += ' VIP packaging included.';
+                }
+
+                this.showToast(message, 'success');
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    this.state.cart = [];
+                    this.updateInventoryStock();
+                }, 2000);
+            },
+
+            // Show toast notification
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+
+                const colors = {
+                    success: 'bg-green-500',
+                    warning: 'bg-yellow-500',
+                    info: 'bg-blue-500'
+                };
+
+                toast.className = `${colors[type]} text-white px-6 py-4 rounded-xl shadow-2xl fade-in flex items-center gap-3 max-w-md`;
+                toast.innerHTML = `
+                    <i data-lucide="${type === 'success' ? 'check-circle' : type === 'warning' ? 'alert-circle' : 'info'}" class="w-5 h-5"></i>
+                    <span>${message}</span>
+                `;
+
+                container.appendChild(toast);
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    toast.style.animation = 'fadeIn 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+
+            // Render inventory cards
+            renderInventory() {
+                const container = document.getElementById('inventoryContainer');
+                const filtered = this.state.inventory.filter(flower =>
+                    flower.name.toLowerCase().includes(this.state.searchQuery) ||
+                    flower.type.toLowerCase().includes(this.state.searchQuery)
+                );
+
+                const gridClasses = [
+                    'grid-inv-1', 'grid-inv-2', 'grid-inv-3', 'grid-inv-4',
+                    'grid-inv-5', 'grid-inv-6', 'grid-inv-7', 'grid-inv-8'
                 ];
 
-                const pos = positions[index % positions.length];
-                flowerElement.style.left = pos.left;
-                flowerElement.style.top = pos.top;
+                container.innerHTML = filtered.map((flower, index) => {
+                    const isOutOfStock = flower.stock <= 0;
+                    const isLowStock = flower.stock > 0 && flower.stock <= 5;
+                    const cartItem = this.state.cart.find(item => item.id === flower.id);
+                    const isSelected = !!cartItem;
 
-                // Add flower icon
-                const icon = document.createElement('i');
-                icon.setAttribute('data-lucide', 'flower-2');
-                icon.className = 'w-6 h-6';
-                icon.style.color = 'white';
-                flowerElement.appendChild(icon);
+                    return `
+                        <div class="${gridClasses[index] || ''} flower-card glass rounded-3xl p-6 transition-theme ${isOutOfStock ? 'out-of-stock' : ''} ${isSelected ? 'selected breathing' : ''}"
+                             onclick="${isOutOfStock ? '' : `app.addToCart(${flower.id})`}">
 
-                container.appendChild(flowerElement);
-            });
+                            <span class="stock-badge ${isLowStock ? 'low' : ''} ${isOutOfStock ? 'out' : ''}">
+                                ${isOutOfStock ? 'Out of Stock' : `${flower.stock} stems`}
+                            </span>
 
-            // Reinitialize icons for new flowers
-            lucide.createIcons();
-        }
+                            <div class="flower-card-content flex flex-col items-center gap-4 mb-4">
+                                <div class="w-20 h-20 rounded-full flex items-center justify-center"
+                                     style="background: linear-gradient(135deg, ${flower.color}40 0%, ${flower.color}80 100%);">
+                                    <i data-lucide="${flower.icon}" class="w-10 h-10" style="color: ${flower.color};"></i>
+                                </div>
+                                <div class="flex-1 text-center">
+                                    <h3 class="text-xl font-bold mb-1 text-moss" style="color: var(--deep-moss);">
+                                        ${flower.name}
+                                    </h3>
+                                    <p class="text-sm text-charcoal mb-2" style="color: var(--soft-charcoal);">
+                                        ${flower.type}
+                                    </p>
+                                    <p class="text-2xl font-bold" style="color: var(--gold);">
+                                        $${flower.price.toFixed(2)}
+                                    </p>
+                                </div>
+                            </div>
 
-        // Update receipt
-        function updateReceipt() {
-            const receipt = document.getElementById('receipt');
-            let html = `
-                <div class="receipt-item flex justify-between">
-                    <span style="color: var(--light-green);">Base Arrangement</span>
-                    <span style="color: var(--deep-green);" class="font-semibold">$${basePrice.toFixed(2)}</span>
-                </div>
-            `;
+                            ${isSelected ? `
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t" style="border-color: var(--deep-moss);">
+                                    <button onclick="event.stopPropagation(); app.removeFromCart(${flower.id})"
+                                            class="w-8 h-8 rounded-full flex items-center justify-center glass-dark hover:scale-110 transition-transform">
+                                        <i data-lucide="minus" class="w-4 h-4" style="color: white;"></i>
+                                    </button>
+                                    <span class="font-bold text-lg" style="color: var(--deep-moss);">
+                                        ${cartItem.quantity}
+                                    </span>
+                                    <button onclick="event.stopPropagation(); app.addToCart(${flower.id})"
+                                            class="w-8 h-8 rounded-full flex items-center justify-center glass-dark hover:scale-110 transition-transform">
+                                        <i data-lucide="plus" class="w-4 h-4" style="color: white;"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
 
-            // Group flowers by type
-            const flowerCounts = {};
-            flowers.forEach(flower => {
-                if (!flowerCounts[flower.name]) {
-                    flowerCounts[flower.name] = { count: 0, price: flower.price };
+                lucide.createIcons();
+            },
+
+            // Render receipt
+            renderReceipt() {
+                const receiptItems = document.getElementById('receiptItems');
+                const feesDiv = document.getElementById('fees');
+                const totalPrice = document.getElementById('totalPrice');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+
+                if (this.state.cart.length === 0) {
+                    receiptItems.innerHTML = `
+                        <p class="text-charcoal opacity-60 text-sm" style="color: var(--soft-charcoal);">
+                            No items added yet
+                        </p>
+                    `;
+                    feesDiv.innerHTML = '';
+                    totalPrice.textContent = '$0.00';
+                    checkoutBtn.disabled = true;
+                    return;
                 }
-                flowerCounts[flower.name].count++;
-            });
 
-            // Add each flower type to receipt
-            for (const [name, data] of Object.entries(flowerCounts)) {
-                const total = data.count * data.price;
-                html += `
+                checkoutBtn.disabled = false;
+
+                receiptItems.innerHTML = this.state.cart.map((item, index) => `
+                    <div class="receipt-item flex justify-between items-center slide-in" style="animation-delay: ${index * 0.05}s">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full" style="background: ${item.color};"></div>
+                            <div>
+                                <p class="font-semibold text-charcoal" style="color: var(--soft-charcoal);">
+                                    ${item.name}
+                                </p>
+                                <p class="text-xs opacity-60">
+                                    $${item.price.toFixed(2)} × ${item.quantity}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="font-bold" style="color: var(--deep-moss);">
+                            $${(item.price * item.quantity).toFixed(2)}
+                        </span>
+                    </div>
+                `).join('');
+
+                let feesHTML = `
                     <div class="receipt-item flex justify-between">
-                        <span style="color: var(--light-green);">${name} × ${data.count}</span>
-                        <span style="color: var(--deep-green);" class="font-semibold">$${total.toFixed(2)}</span>
+                        <span class="text-charcoal" style="color: var(--soft-charcoal);">Subtotal</span>
+                        <span class="font-semibold" style="color: var(--deep-moss);">$${this.state.subtotal.toFixed(2)}</span>
                     </div>
                 `;
+
+                if (this.state.complexityPremium > 0) {
+                    const uniqueTypes = new Set(this.state.cart.map(item => item.name)).size;
+                    feesHTML += `
+                        <div class="receipt-item flex justify-between items-center" style="color: var(--gold);">
+                            <div>
+                                <span class="font-semibold">Complexity Premium</span>
+                                <p class="text-xs opacity-75">${uniqueTypes} unique varieties</p>
+                            </div>
+                            <span class="font-semibold">+$${this.state.complexityPremium.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                feesDiv.innerHTML = feesHTML;
+                totalPrice.textContent = `$${this.state.total.toFixed(2)}`;
+            },
+
+            // Initial render
+            render() {
+                this.renderInventory();
+                this.renderReceipt();
             }
+        };
 
-            const totalPrice = calculateTotal();
-
-            // Add complimentary ribbon if over $40
-            if (totalPrice > 40) {
-                html += `
-                    <div class="receipt-item flex justify-between" style="color: var(--gold);">
-                        <span>✨ Complimentary Silk Ribbon</span>
-                        <span class="font-semibold">$0.00</span>
-                    </div>
-                `;
-                document.getElementById('ribbonMessage').classList.remove('hidden');
-            } else {
-                document.getElementById('ribbonMessage').classList.add('hidden');
-            }
-
-            receipt.innerHTML = html;
-            document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
-        }
-
-        // Calculate total price
-        function calculateTotal() {
-            let total = basePrice;
-            flowers.forEach(flower => {
-                total += flower.price;
-            });
-            return total;
-        }
-
-        // Update gift card preview
-        function updateGiftCard() {
-            const message = document.getElementById('giftMessage').value;
-            const preview = document.getElementById('giftCardPreview');
-
-            if (message.trim() === '') {
-                preview.innerHTML = '<p class="text-gray-400 italic">Your message will appear here...</p>';
-            } else {
-                preview.innerHTML = `<p class="text-lg leading-relaxed">"${message}"</p>`;
-            }
-        }
-
-        // Checkout validation
-        function checkout() {
-            if (flowers.length === 0) {
-                showNotification(
-                    'A vase looks best with flowers! Please add at least one bloom to your bouquet.',
-                    false
-                );
-                return;
-            }
-
-            const total = calculateTotal();
-            if (total > 40) {
-                showNotification(
-                    '🎉 Congratulations! Your beautiful bouquet qualifies for a complimentary silk ribbon!',
-                    true
-                );
-            } else {
-                showNotification(
-                    '✨ Thank you for your order! Your beautiful bouquet will be prepared with care.',
-                    false
-                );
-            }
-        }
-
-        // Show notification
-        function showNotification(message, isCelebration) {
-            // Remove existing notification if any
-            const existing = document.querySelector('.notification');
-            if (existing) {
-                existing.remove();
-            }
-
-            const notification = document.createElement('div');
-            notification.className = 'notification' + (isCelebration ? ' celebration' : '');
-            notification.innerHTML = `
-                <p class="font-semibold text-lg mb-2">${isCelebration ? 'Wonderful!' : 'Notice'}</p>
-                <p>${message}</p>
-            `;
-
-            document.body.appendChild(notification);
-
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => notification.remove(), 300);
-            }, 5000);
-        }
-
-        // Initialize
-        updateReceipt();
+        // Initialize app on load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
     </script>
 </body>
 </html>
